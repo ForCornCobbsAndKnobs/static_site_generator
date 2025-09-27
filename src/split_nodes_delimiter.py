@@ -1,5 +1,7 @@
 from htmlnode import ParentNode, LeafNode
 from textnode import TextType, TextNode
+from extract_markdown_images import *
+
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     new_nodes = []
@@ -21,4 +23,47 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                 new_nodes.append(new_node)
     return new_nodes
 
-            
+def split_nodes_image(old_nodes):
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type != TextType.TEXT:
+            new_nodes.append(node)
+            continue
+        remaining = node.text
+        matches = extract_markdown_images(remaining)
+        while len(matches) > 0:
+            alt, url = matches[0]
+            token = f"![{alt}]({url})"
+            before, after = remaining.split(token, 1)
+            if before:
+                new_nodes.append(TextNode(before, TextType.TEXT))
+            new_nodes.append(TextNode(alt, TextType.IMAGE, url=url))
+            remaining = after
+            matches = extract_markdown_images(remaining)
+        if remaining:
+            new_nodes.append(TextNode(remaining, TextType.TEXT))
+    return new_nodes
+
+        
+
+
+def split_nodes_link(old_nodes):
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type != TextType.TEXT:
+            new_nodes.append(node)
+            continue
+        remaining = node.text
+        matches = extract_markdown_links(remaining)
+        while len(matches) > 0:
+            alt, url = matches[0]
+            token = f"[{alt}]({url})"
+            before, after = remaining.split(token, 1)
+            if before:
+                new_nodes.append(TextNode(before, TextType.TEXT))
+            new_nodes.append(TextNode(alt, TextType.LINK, url=url))
+            remaining = after
+            matches = extract_markdown_links(remaining)
+        if remaining:
+            new_nodes.append(TextNode(remaining, TextType.TEXT))
+    return new_nodes
