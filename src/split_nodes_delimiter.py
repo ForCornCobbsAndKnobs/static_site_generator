@@ -1,5 +1,5 @@
-from htmlnode import ParentNode, LeafNode
-from textnode import TextType, TextNode
+from htmlnode import *
+from textnode import *
 from extract_markdown_images import *
 
 
