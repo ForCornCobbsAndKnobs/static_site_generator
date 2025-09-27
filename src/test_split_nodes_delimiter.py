@@ -1,6 +1,6 @@
 import unittest
-from htmlnode import *
-from textnode import *
+from htmlnode import ParentNode, LeafNode
+from textnode import TextNode
 from split_nodes_delimiter import split_nodes_delimiter, split_nodes_image, split_nodes_link, split_to_textnodes
 from markdown_to_blocks import markdown_to_blocks
 
