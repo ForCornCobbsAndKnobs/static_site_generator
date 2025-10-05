@@ -11,7 +11,7 @@ def extract_title(markdown):
             return line
     raise Exception("No h1 header in markdown")
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(basepath, from_path, template_path, dest_path):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     markdown_file = open(from_path, 'r')
     from_md = markdown_file.read()
@@ -27,6 +27,8 @@ def generate_page(from_path, template_path, dest_path):
     title = extract_title(from_md)
     template = template.replace("{{ Title }}", title)
     template = template.replace("{{ Content }}", from_html)
+    template = template.replace('href="/', f'href="{basepath}')
+    template = template.replace('src="/', f'src="{basepath}')
 
     directory = os.path.dirname(dest_path)
     os.makedirs(directory, exist_ok=True)
